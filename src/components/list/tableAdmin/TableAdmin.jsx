@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box } from '@mui/material';
-import { Check, Clear } from '@mui/icons-material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box,IconButton } from '@mui/material';
+import { Check, Clear, Delete as DeleteIcon } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ const TableAdmin = () => {
         })
         .then(response => setUsers(response.data))
         .catch(error => console.error('Error fetching users:', error));
-    }, []);
+    }, [token]);
 
     const handlePermissionChange = (userId, field, value) => {
         axios.patch(`http://127.0.0.1:8000/api/auth/users/${userId}/update/`, {
@@ -37,6 +37,31 @@ const TableAdmin = () => {
         })
         .catch(() => {
             Swal.fire('خطأ!', 'حدث خطأ أثناء التحديث.', 'error');
+        });
+    };
+
+    const handleDeleteUser = (userId) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "you will not be bale to back down from this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`http://127.0.0.1:8000/api/auth/delete_user/${userId}/`, {
+                    headers: { Authorization: `Token ${token}`},
+                })
+                .then(() => {
+                    Swal.fire('user was deleted','deleted!','success');
+                    setUsers(users.filter(user => user.id !== userId));
+                })
+                .catch(error => {
+                    Swal.fire('error when you try delete user', 'error!', 'error');
+                });
+            }
         });
     };
 
@@ -73,6 +98,7 @@ const TableAdmin = () => {
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>SuperAdmin</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Client</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Active</TableCell>
+                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Delete</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -108,6 +134,14 @@ const TableAdmin = () => {
                                  >
                                     {user.is_active ? <Check color="success" /> : <Clear color="error" />}
                                 </TableCell>
+                                <TableCell>
+                                    <IconButton
+                                        onClick={() => handleDeleteUser(user.id)}
+                                        aria-label="delete"
+                                    >
+                                        <DeleteIcon color="error" />
+                                    </IconButton>
+                                    </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
