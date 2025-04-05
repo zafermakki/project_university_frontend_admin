@@ -6,11 +6,22 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Swal from 'sweetalert2';
 import axios from 'axios'; 
 import { useNavigate } from "react-router-dom"
 
 const Navbar = () => {
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const navigate = useNavigate();
     
@@ -52,7 +63,7 @@ const Navbar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
+        <AppBar position="static" sx={{ boxShadow: 'none' }}>
             <Toolbar>
                 <IconButton
                     size="large"
@@ -61,10 +72,31 @@ const Navbar = () => {
                     aria-label="menu"
                     sx={{ mr: 2 }}
                 >
-                    <MenuIcon />
+                    <div>
+                            <MenuIcon 
+                                    id="basic-button"
+                                    aria-controls={open ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? 'true' : undefined}
+                                    onClick={handleClick}
+                            />
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={() => navigate('/Categories')}>Categories</MenuItem>
+                            <MenuItem onClick={() => navigate('/AddSubCategories')}>Sub Categories</MenuItem>
+                            <MenuItem onClick={handleClose}>Products</MenuItem>
+                        </Menu>
+                    </div>
                 </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        News
+                        ADMIN PANEL
                     </Typography>
                 <Button color="inherit" onClick={handleLogout}>Logout</Button>
             </Toolbar>
