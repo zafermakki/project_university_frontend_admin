@@ -90,8 +90,8 @@ const Navbar = () => {
                             }}
                         >
                             <MenuItem onClick={() => navigate('/Categories')}>Categories</MenuItem>
-                            <MenuItem onClick={() => navigate('/AddSubCategories')}>Sub Categories</MenuItem>
-                            <MenuItem onClick={handleClose}>Products</MenuItem>
+                            <MenuItem onClick={() => navigate('/SubCategories')}>Sub Categories</MenuItem>
+                            <MenuItem onClick={() => navigate('/Products')}>Products</MenuItem>
                         </Menu>
                     </div>
                 </IconButton>
