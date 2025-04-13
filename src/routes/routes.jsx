@@ -13,6 +13,10 @@ import EditSubCategory from "../components/adminActions/editSubCategory/EditSubC
 import Products from "../components/products/Products";
 import AddProduct from "../components/adminActions/addProduct/AddProduct";
 import EditProduct from "../components/adminActions/editProduct/EditProduct";
+import ProductsRating from "../components/productsRating/ProductsRating";
+import News from "../components/news/News";
+import AddNews from "../components/adminActions/addNews/AddNews";
+import EditNews from "../components/adminActions/editNews/EditNews";
 
 export const routes = (setMyMode) => createBrowserRouter([
     {
@@ -70,5 +74,21 @@ export const routes = (setMyMode) => createBrowserRouter([
     {
         path: 'EditProduct/:id',
         element: <EditProduct/>
+    },
+    {
+        path: 'ProductsRating',
+        element: <ProductsRating/>
+    },
+    {
+        path: 'News',
+        element: <News/>
+    },
+    {
+        path: 'AddNews',
+        element: <AddNews/>
+    },
+    {
+        path: 'EditNews/:id',
+        element: <EditNews/>
     }
 ])

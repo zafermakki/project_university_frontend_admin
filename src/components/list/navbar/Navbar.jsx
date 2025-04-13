@@ -92,6 +92,8 @@ const Navbar = () => {
                             <MenuItem onClick={() => navigate('/Categories')}>Categories</MenuItem>
                             <MenuItem onClick={() => navigate('/SubCategories')}>Sub Categories</MenuItem>
                             <MenuItem onClick={() => navigate('/Products')}>Products</MenuItem>
+                            <MenuItem onClick={() => navigate('/ProductsRating')}>Products Rating</MenuItem>
+                            <MenuItem onClick={() => navigate('/News')}>News</MenuItem>
                         </Menu>
                     </div>
                 </IconButton>

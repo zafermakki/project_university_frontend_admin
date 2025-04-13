@@ -52,8 +52,8 @@ const Products = () => {
     }
 
   return (
-    <Container>
-        <Box display="flex" justifyContent="space-between" alignItems="center" my={2}>
+    <Container maxWidth={false} sx={{paddingX: 0}}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" my={2} px={2}>
             <Typography variant="h4" gutterBottom>
                 Products
             </Typography>
@@ -65,7 +65,8 @@ const Products = () => {
                 Add
             </Button>
       </Box>
-      <TableContainer component={Paper}>
+      <Box sx={{ overflowX: "auto", px: 2 }}>
+      <TableContainer component={Paper} sx={{minWidth:1500}}>
         <Table>
           <TableHead>
             <TableRow>
@@ -77,6 +78,8 @@ const Products = () => {
               <TableCell><strong>Description</strong></TableCell>
               <TableCell><strong>Price</strong></TableCell>
               <TableCell><strong>Discount Percentage</strong></TableCell>
+              <TableCell><strong>Final Price</strong></TableCell>
+              <TableCell><strong>Average Rating</strong></TableCell>
               <TableCell><strong>quantity</strong></TableCell>
               <TableCell><strong>Image</strong></TableCell>
             </TableRow>
@@ -92,6 +95,8 @@ const Products = () => {
                 <TableCell>{product.description}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>{product.discount_percentage}</TableCell>
+                <TableCell>{product.final_price}</TableCell>
+                <TableCell>{product.average_rating}</TableCell>
                 <TableCell>{product.quantity}</TableCell>
                 <TableCell>
                   <img
@@ -127,6 +132,7 @@ const Products = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
     </Container>
   )
 }
