@@ -17,6 +17,10 @@ import ProductsRating from "../components/productsRating/ProductsRating";
 import News from "../components/news/News";
 import AddNews from "../components/adminActions/addNews/AddNews";
 import EditNews from "../components/adminActions/editNews/EditNews";
+import NewGames from "../components/newGames/NewGames";
+import AddNewGames from "../components/adminActions/addNewGames/AddNewGames";
+import EditNewGames from "../components/adminActions/editNewGames/EditNewGames";
+import Purchases from "../components/purchases/Purchases";
 
 export const routes = (setMyMode) => createBrowserRouter([
     {
@@ -90,5 +94,21 @@ export const routes = (setMyMode) => createBrowserRouter([
     {
         path: 'EditNews/:id',
         element: <EditNews/>
+    },
+    {
+        path: 'NewGames',
+        element: <NewGames/>
+    },
+    {
+        path: 'AddNewGames',
+        element: <AddNewGames/>
+    },
+    {
+        path: 'EditNewGames/:id',
+        element: <EditNewGames/>
+    },
+    {
+        path: 'Purchases',
+        element: <Purchases/>
     }
 ])

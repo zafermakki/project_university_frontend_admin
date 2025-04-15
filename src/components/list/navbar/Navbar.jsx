@@ -94,6 +94,8 @@ const Navbar = () => {
                             <MenuItem onClick={() => navigate('/Products')}>Products</MenuItem>
                             <MenuItem onClick={() => navigate('/ProductsRating')}>Products Rating</MenuItem>
                             <MenuItem onClick={() => navigate('/News')}>News</MenuItem>
+                            <MenuItem onClick={() => navigate('/NewGames')}>New Games</MenuItem>
+                            <MenuItem onClick={() => navigate('/Purchases')}>Purchases</MenuItem>
                         </Menu>
                     </div>
                 </IconButton>
