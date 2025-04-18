@@ -12,6 +12,7 @@ import {
   FormControl
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EditSubCategory = () => {
 
@@ -75,11 +76,25 @@ const EditSubCategory = () => {
             }
         );
     } catch (error) {
-        if (error.response) {
-            console.error(error.response.data);
-        } else {
-            console.error(error);
-        }
+        if (error.response && error.response.status === 403) {
+            Swal.fire({
+              icon: 'error',
+              title: "Permission Denied",
+              text: "You don't have this permission!!",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: "Error",
+              text: "Something went wrong.",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+            });
+          }
     }
     };
 

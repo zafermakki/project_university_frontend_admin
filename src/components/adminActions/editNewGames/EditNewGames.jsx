@@ -12,6 +12,7 @@ import {
   FormControl
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 
 const EditNewGames = () => {
@@ -90,10 +91,24 @@ const EditNewGames = () => {
           }
         });
       } catch (error) {
-        if (error.response) {
-          console.log(error.response.data);
+        if (error.response && error.response.status === 403) {
+          Swal.fire({
+            icon: 'error',
+            title: "Permission Denied",
+            text: "You don't have this permission!!",
+            background:"#000422",
+            confirmButtonColor: '#2196f3',
+            color:"#fff",
+          });
         } else {
-          console.log(error);
+          Swal.fire({
+              icon: 'error',
+              title: "Error",
+              text: "Something went wrong.",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+          });
         }
       }
   };

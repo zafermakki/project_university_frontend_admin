@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const NewGames = () => {
 
@@ -48,6 +49,22 @@ const NewGames = () => {
             setNewGames(newGames.filter((game) => game.id !== id));
         } catch (error) {
             console.log("error", error);
+            if (error.response && error.response.status === 403) {
+              Swal.fire({
+                icon: 'error',
+                title: "Permission Denied",
+                text: "You don't have this permission!!",
+                background:"#000422",
+                confirmButtonColor: '#2196f3',
+                color:"#fff",
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: "Error",
+                text: "Something went wrong while deleting.",
+              });
+            }
         }
     }
 

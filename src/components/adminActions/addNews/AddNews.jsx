@@ -7,12 +7,14 @@ import {
   Button,
   Typography
 } from '@mui/material';
+import Swal from 'sweetalert2';
 
 const AddNews = () => {
 
   const [name, setName] = useState('');
   const [explanation, setExplanation] = useState('');
   const [image, setImage] = useState(null);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,11 +32,32 @@ const AddNews = () => {
         }
       });
       console.log('success', response.data);
+      Swal.fire({
+        icon: 'success',
+        title: "the operation was successful",
+        background:"#000422",
+        confirmButtonColor: '#2196f3',
+        color:"#fff",
+      });
     } catch (error) {
-      if (error.response) {
-        console.log("Error data:", error.response.data);
+      if (error.response && error.response.status === 403) {
+        Swal.fire({
+          icon: 'error',
+          title: "Permission Denied",
+          text: "You don't have this permission!!",
+          background:"#000422",
+          confirmButtonColor: '#2196f3',
+          color:"#fff",
+        });
       } else {
-        console.log("Error", error);
+        Swal.fire({
+              icon: 'error',
+              title: "Error",
+              text: "Something went wrong.",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+        });
       }
     }
   };

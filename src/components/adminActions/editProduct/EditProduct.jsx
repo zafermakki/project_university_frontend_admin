@@ -12,6 +12,7 @@ import {
   FormControl
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EditProduct = () => {
 
@@ -92,32 +93,46 @@ const EditProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-const token = localStorage.getItem("token");
-const formData = new FormData();
-formData.append('name', name);
-formData.append('sub_category', subCategory);
-formData.append('release_date', releaseDate);
-formData.append('games_type', gameType);
-formData.append('description', description);
-formData.append('price', price);
-formData.append('discount_percentage', discountPercentage);
-formData.append('video_url', video);
-formData.append('quantity', quantity);
-if (imageFile) {
-  formData.append('image_path', imageFile);
-} 
-try {
-  const response = await axios.patch(`http://127.0.0.1:8000/api/products/allproducts/${id}/`, formData, {
-    headers: {
-      Authorization: `Token ${token}`,
-      'Content-Type': 'multipart/form-data',
-    }
-  });
-} catch (error) {
-  if (error.response) {
-    console.log(error.response.data);
-  } else {
-    console.log(error);
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('sub_category', subCategory);
+      formData.append('release_date', releaseDate);
+      formData.append('games_type', gameType);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('discount_percentage', discountPercentage);
+      formData.append('video_url', video);
+      formData.append('quantity', quantity);
+      if (imageFile) {
+        formData.append('image_path', imageFile);
+      } 
+      try {
+        const response = await axios.patch(`http://127.0.0.1:8000/api/products/allproducts/${id}/`, formData, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          Swal.fire({
+            icon: 'error',
+            title: "Permission Denied",
+            text: "You don't have this permission!!",
+            background:"#000422",
+            confirmButtonColor: '#2196f3',
+            color:"#fff",
+          });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: "Error",
+              text: "Something went wrong.",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+        });
   }
 }
 };

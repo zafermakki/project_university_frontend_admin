@@ -8,6 +8,7 @@ import {
   Typography
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EditCategory = () => {
   const { id } = useParams(); 
@@ -57,10 +58,24 @@ const EditCategory = () => {
       );
       console.log(response.data);
     } catch (error) {
-      if (error.response) {
-        console.error(error.response.data);
+      if (error.response && error.response.status === 403) {
+        Swal.fire({
+          icon: 'error',
+          title: "Permission Denied",
+          text: "You don't have this permission!!",
+          background:"#000422",
+          confirmButtonColor: '#2196f3',
+          color:"#fff",
+        });
       } else {
-        console.error(error);
+        Swal.fire({
+              icon: 'error',
+              title: "Error",
+              text: "Something went wrong.",
+              background:"#000422",
+              confirmButtonColor: '#2196f3',
+              color:"#fff",
+        });
       }
     }
   };

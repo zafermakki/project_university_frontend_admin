@@ -11,6 +11,7 @@ import {
     InputLabel,
     FormControl
 } from '@mui/material';
+import Swal from 'sweetalert2';
 
 const AddSubCategories = () => {
 
@@ -20,6 +21,7 @@ const AddSubCategories = () => {
 
     const [parentCategories, setParentCategories] = useState([]);
 
+    
     useEffect(() => {
         const fetchParentCategories = async () => {
             try {
@@ -51,12 +53,33 @@ const AddSubCategories = () => {
                 }
             });
             console.log('success', response.data);
+            Swal.fire({
+                icon: 'success',
+                title: "the operation was successful",
+                background:"#000422",
+                confirmButtonColor: '#2196f3',
+                color:"#fff",
+              });
         } catch (error) {
-            if (error.response) {
-                console.log("Error data:", error.response.data);
-            } else {
-                console.log("Error", error);
-            }
+            if (error.response && error.response.status === 403) {
+                Swal.fire({
+                  icon: 'error',
+                  title: "Permission Denied",
+                  text: "You don't have this permission!!",
+                  background:"#000422",
+                  confirmButtonColor: '#2196f3',
+                  color:"#fff",
+                });
+              } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: "Error",
+                    text: "Something went wrong.",
+                    background:"#000422",
+                    confirmButtonColor: '#2196f3',
+                    color:"#fff",
+                });
+              }
         }
     };
 
