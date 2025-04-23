@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box,IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box,IconButton,TextField } from '@mui/material';
 import { Check, Clear, Delete as DeleteIcon } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
@@ -9,19 +9,38 @@ const TableAdmin = () => {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+
     const token = localStorage.getItem('token');
 
     const handleUserDetails = (userId) => {
         navigate(`/details/${userId}`)
     }
 
+    const fetchUsers = async (search = '') => {
+        const url = search
+            ? `http://127.0.0.1:8000/api/auth/users/search/?q=${search}`
+            : `http://127.0.0.1:8000/api/auth/users/`;
+
+        try {
+            const response = await axios.get(url, {
+                headers: { Authorization: `Token ${token}` }
+            });
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/auth/users/', {
-            headers: { Authorization: `Token ${token}` }
-        })
-        .then(response => setUsers(response.data))
-        .catch(error => console.error('Error fetching users:', error));
+        fetchUsers();
     }, [token]);
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        fetchUsers(value);
+    };
 
     const handlePermissionChange = (userId, field, value) => {
         axios.patch(`http://127.0.0.1:8000/api/auth/users/${userId}/update/`, {
@@ -30,13 +49,27 @@ const TableAdmin = () => {
             headers: { Authorization: `Token ${token}` }
         })
         .then(() => {
-            Swal.fire('تم التحديث!', 'تم تعديل الصلاحيات بنجاح.', 'success');
+            Swal.fire({
+                title: 'Success',
+                text: 'Success to change',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                background:"#000422",
+                color:"#fff",
+              });
             setUsers(users.map(user => 
                 user.id === userId ? { ...user, [field]: value } : user
             ));
         })
         .catch(() => {
-            Swal.fire('خطأ!', 'حدث خطأ أثناء التحديث.', 'error');
+            Swal.fire({
+                title: 'Error when you tried to change for user',
+                text: 'Something went wrong!',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                background:"#000422",
+                color:"#fff",
+              });
         });
     };
 
@@ -47,6 +80,8 @@ const TableAdmin = () => {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
+            background:"#000422",
+            color:"#fff",
             cancelButtonColor: '#d33',
             confirmButtonText: 'Delete!'
         }).then((result) => {
@@ -55,11 +90,25 @@ const TableAdmin = () => {
                     headers: { Authorization: `Token ${token}`},
                 })
                 .then(() => {
-                    Swal.fire('user was deleted','deleted!','success');
+                    Swal.fire({
+                        title: 'User was deleted',
+                        text: 'Deleted!',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        background:"#000422",
+                        color:"#fff",
+                      });
                     setUsers(users.filter(user => user.id !== userId));
                 })
                 .catch(error => {
-                    Swal.fire('error when you try delete user', 'error!', 'error');
+                    Swal.fire({
+                        title: 'Error when you tried to delete user',
+                        text: 'Something went wrong!',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6',
+                        background:"#000422",
+                        color:"#fff",
+                      });
                 });
             }
         });
@@ -87,6 +136,15 @@ const TableAdmin = () => {
                 <button onClick={showAllExceptClients} style={{ padding: '8px 16px', backgroundColor: '#4caf50', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         Admins
                 </button>
+            </Box>
+            <Box mb={2} display="flex" justifyContent="center">
+                <TextField
+                    label="Search..."
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    sx={{ width: '50%' }}
+                />
             </Box>
                 <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
                 <Table>

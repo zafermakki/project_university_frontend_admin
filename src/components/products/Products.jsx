@@ -11,7 +11,8 @@ import {
   Paper,
   Button,
   Typography,
-  Box
+  Box,
+  TextField 
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,30 @@ const Products = () => {
 
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+
+      const delayDebounce = setTimeout(() => {
+          const url = searchQuery
+              ? `http://127.0.0.1:8000/api/products/all/search/?q=${searchQuery}`
+              : "http://127.0.0.1:8000/api/products/allproducts/";
+
+          axios.get(url, {
+              headers: { Authorization: `Token ${token}` }
+          })
+          .then((response) => {
+              setProducts(response.data);
+          })
+          .catch((error) => {
+              console.log("Search error:", error);
+          });
+      }, 500); // تأخير 0.5 ثانية
+
+      return () => clearTimeout(delayDebounce); // تنظيف التايمر
+  }, [searchQuery]);
 
     useEffect(() => {
         fetchProdcuts();
@@ -74,13 +99,22 @@ const Products = () => {
             <Typography variant="h4" gutterBottom>
                 Products
             </Typography>
-            <Button 
-                variant="contained" 
-                color="primary"
-                onClick={() => navigate("/AddProduct")}
-            >
-                Add
-            </Button>
+            <Box display="flex" alignItems="center" gap={2}>
+            <TextField
+                label="Search by name"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={() => navigate("/AddProduct")}
+              >
+                  Add
+              </Button>
+            </Box>
       </Box>
       <Box sx={{ overflowX: "auto", px: 2 }}>
       <TableContainer component={Paper} sx={{minWidth:1500}}>

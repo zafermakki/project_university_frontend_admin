@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FormControl, InputLabel, Select, MenuItem, Button, Typography,CircularProgress,Box,List,ListItem,ListItemText,Paper } from '@mui/material';
+import Swal from 'sweetalert2';
 
 const PermissionsForm = ({ userId }) => {
     const [permissions, setPermissions] = useState([]);
@@ -8,7 +9,6 @@ const PermissionsForm = ({ userId }) => {
     const [loading, setLoading] = useState(true);
     const [userPermissions, setUserPermissions] = useState([]);
 
-    // جلب قائمة الصلاحيات من الـ API
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/auth/users/permissions/',{
             headers: {
@@ -16,7 +16,7 @@ const PermissionsForm = ({ userId }) => {
             }
         })
             .then((response) => setPermissions(response.data))
-            .catch((error) => console.error('خطأ في جلب الصلاحيات:', error));
+            .catch((error) => console.error('error when try get all permissions:', error));
     }, []);
 
     useEffect(() => {
@@ -33,12 +33,8 @@ const PermissionsForm = ({ userId }) => {
         })
     }, [userId]);
 
-    // تحديث صلاحيات المستخدم
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log('البيانات المُرسلة:', selectedPermissions);
-
         try {
             await axios.put(`http://127.0.0.1:8000/api/auth/users/${userId}/permissions/`, {
             permissions: selectedPermissions,
@@ -48,10 +44,23 @@ const PermissionsForm = ({ userId }) => {
             }
         });
 
-            alert('تم تحديث الصلاحيات بنجاح!');
+        Swal.fire({
+            title: 'Success',
+            text: 'Success to change',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            background:"#000422",
+            color:"#fff",
+          });
         } catch (error) {
-            console.error('حدث خطأ أثناء تحديث الصلاحيات:', error);
-            alert('حدث خطأ أثناء تحديث الصلاحيات.');
+            Swal.fire({
+                title: 'Error when you tried to change for user',
+                text: 'Something went wrong!',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                background:"#000422",
+                color:"#fff",
+              });
         }
     };
 
