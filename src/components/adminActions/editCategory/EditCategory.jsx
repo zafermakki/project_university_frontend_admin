@@ -56,6 +56,14 @@ const EditCategory = () => {
           }
         }
       );
+      Swal.fire({
+        icon: 'success',
+        title: "operation is sucessful",
+        text: "the edit was successful",
+        background:"#000422",
+        confirmButtonColor: '#2196f3',
+        color:"#fff",
+      });
       console.log(response.data);
     } catch (error) {
       if (error.response && error.response.status === 403) {

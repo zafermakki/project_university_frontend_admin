@@ -90,6 +90,14 @@ const EditNewGames = () => {
             'Content-Type': 'multipart/form-data',
           }
         });
+        Swal.fire({
+          icon: 'success',
+          title: "operation is sucessful",
+          text: "the edit was successful",
+          background:"#000422",
+          confirmButtonColor: '#2196f3',
+          color:"#fff",
+        });
       } catch (error) {
         if (error.response && error.response.status === 403) {
           Swal.fire({

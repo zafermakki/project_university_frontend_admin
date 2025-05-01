@@ -170,10 +170,7 @@ const TableAdmin = () => {
                                     {user.email}
                                 </TableCell>
                                 <TableCell
-                                    onClick={() => handlePermissionChange(user.id, 'is_staff', !user.is_staff)}
-                                    style={{ cursor: 'pointer'}}
-                                    
-                                >
+                                    >
                                     {user.is_staff ? <Check color="success" /> : <Clear color="error" />}
                                 </TableCell>
                                 <TableCell 
