@@ -70,7 +70,7 @@ const UserDetails = () => {
                     </Box>
 
                     {/* ✅ نموذج تحديث الصلاحيات */}
-                    {isCurrentUserSuperuser && !userDetails.is_client && !userDetails.is_superuser &&(
+                    {isCurrentUserSuperuser && !userDetails.is_client && !userDetails.is_superuser && !userDetails.is_delivery_provider &&(
                         <>
                             <Divider sx={{ marginY: 2 }} />
                             <PermissionsForm userId={id} />

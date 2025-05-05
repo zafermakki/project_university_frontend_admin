@@ -116,10 +116,12 @@ const TableAdmin = () => {
 
     const showClients = () => setFilter('clients');
     const showAllExceptClients = () => setFilter('admins');
+    const showDeliveryProviders = () => setFilter('delivery');
 
     const filteredUsers = users.filter(user => {
         if (filter === 'clients') return user.is_client;
-        if (filter === 'admins') return !user.is_client;
+        if (filter === 'admins') return !user.is_client && !user.is_delivery_provider;
+        if (filter === 'delivery') return user.is_delivery_provider;
         return true;
     });
 
@@ -135,6 +137,9 @@ const TableAdmin = () => {
                 </button>
                 <button onClick={showAllExceptClients} style={{ padding: '8px 16px', backgroundColor: '#4caf50', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         Admins
+                </button>
+                <button onClick={showDeliveryProviders} style={{ padding: '8px 16px', backgroundColor: '#f57c00', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        Delivery Providers
                 </button>
             </Box>
             <Box mb={2} display="flex" justifyContent="center">
@@ -152,9 +157,10 @@ const TableAdmin = () => {
                         <TableRow>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Name</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Email</TableCell>
-                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Admin</TableCell>
+                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Staff</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>SuperAdmin</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Client</TableCell>
+                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Delivery</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Active</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Delete</TableCell>
                         </TableRow>
@@ -181,6 +187,10 @@ const TableAdmin = () => {
                                 </TableCell>
                                 <TableCell >
                                     {user.is_client ? <Check color="success" /> : <Clear color="error" />}
+                                </TableCell>
+                                <TableCell
+                                    >
+                                    {user.is_delivery_provider ? <Check color="success" /> : <Clear color="error" />}
                                 </TableCell>
                                 <TableCell
                                     onClick={() => handlePermissionChange(user.id, 'is_active', !user.is_active)}
