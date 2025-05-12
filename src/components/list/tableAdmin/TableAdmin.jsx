@@ -157,7 +157,7 @@ const TableAdmin = () => {
                         <TableRow>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Name</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Email</TableCell>
-                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Staff</TableCell>
+                            <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Admin</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>SuperAdmin</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Client</TableCell>
                             <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Delivery</TableCell>

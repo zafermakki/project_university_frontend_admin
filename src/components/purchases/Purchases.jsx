@@ -102,7 +102,7 @@ const filteredPurchases = purchase.filter((buy) => {
 });
 
   return (
-    <Container>
+    <Container maxWidth={false} sx={{ px: 0 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" my={2}>
         <Typography variant="h4" gutterBottom>
             Purchases
@@ -120,16 +120,19 @@ const filteredPurchases = purchase.filter((buy) => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ width: '100%' }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell><strong>Customer</strong></TableCell>
               <TableCell><strong>Product</strong></TableCell>
               <TableCell><strong>Quantity</strong></TableCell>
+              <TableCell><strong>Country</strong></TableCell>
+              <TableCell><strong>City</strong></TableCell>
+              <TableCell><strong>Phone</strong></TableCell>
               <TableCell><strong>delivered</strong></TableCell>
               <TableCell><strong>Purchase Date</strong></TableCell>
-              <TableCell><strong>Provider</strong></TableCell>
+              <TableCell><strong>Provider</strong></TableCell>    
               <TableCell><strong>Assign/Update Delivery</strong></TableCell>
             </TableRow>
           </TableHead>
@@ -139,6 +142,9 @@ const filteredPurchases = purchase.filter((buy) => {
                 <TableCell>{buy.customer}</TableCell>
                 <TableCell>{buy.product}</TableCell>
                 <TableCell>{buy.quantity}</TableCell>
+                <TableCell>{buy.country}</TableCell>
+                <TableCell>{buy.city}</TableCell>
+                <TableCell>{buy.phone}</TableCell>
                 <TableCell>
                     {buy.delivered ? <Check color="success" /> : <Clear color="error" />}
                 </TableCell>

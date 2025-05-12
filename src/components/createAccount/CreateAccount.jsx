@@ -72,15 +72,9 @@ const CreateAccount = () => {
           title: "A confirmation code has been sent to your email address",
           showConfirmButton: false,
           timer: 4500,
-          customClass: {
-            container: 'custom-swal-container',
-            popup: 'custom-swal-popup',
-            header: 'custom-swal-header',
-            title: 'custom-swal-title',
-            content: 'custom-swal-content',
-            actions: 'custom-swal-actions',
-            confirmButton: 'custom-swal-confirm-button',
-          }
+          background:"#000422",
+          confirmButtonColor: '#2196f3',
+          color:"#fff",
         });
       } else {
         setError(data.message);
