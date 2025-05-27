@@ -54,6 +54,7 @@ const Purchases = () => {
               headers: { Authorization: `Token ${token}` },
           });
           setDeliveryProviders(response.data);
+          console.log(response.data)
       } catch (error) {
           console.error("Failed to fetch delivery providers", error);
       }
@@ -165,7 +166,12 @@ const filteredPurchases = purchase.filter((buy) => {
                             >
                               {deliveryProviders.map((prov) => (
                                 <MenuItem key={prov.id} value={prov.id}>
-                                  {prov.email}
+                                    <Box display="flex" flexDirection="column">
+                                      <Typography variant="body2" fontWeight="bold">{prov.email}</Typography>
+                                      <Typography variant="caption" color="text.secondary">
+                                        🌍 {prov.country} - 🏙️ {prov.city}
+                                      </Typography>
+                                    </Box>
                                 </MenuItem>
                               ))}
                             </Select>
