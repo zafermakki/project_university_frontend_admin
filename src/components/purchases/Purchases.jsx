@@ -18,6 +18,55 @@ import {
   InputLabel
 } from "@mui/material";
 import { Check, Clear } from '@mui/icons-material';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+
+// make report
+const generatePdfReport = (buy) => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+  doc.text('Delivery Report', 105, 20, { align: 'center' });
+
+  autoTable(doc, {
+    startY: 30,
+    theme: 'grid',
+    headStyles: { fillColor: [22, 160, 133], halign: 'center' },
+    bodyStyles: { halign: 'left' },
+    head: [['Field', 'Details']],
+    body: [
+      ['Customer', buy.customer],
+      ['Product', buy.product],
+      ['Quantity', buy.quantity],
+      ['Country', buy.country],
+      ['City', buy.city],
+      ['Phone', buy.phone],
+      ['Delivered', buy.delivered ? 'Yes' : 'No'],
+      ['Provider', buy.provider_email || buy.delivery_provider || '-'],
+      ['Purchase Date', new Date(buy.purchase_date).toLocaleString()],
+      ['Price at Purchase', `${buy.price_at_purchase} USD`],
+      ['Final Price', `${(buy.quantity * buy.price_at_purchase).toFixed(2)} USD`],
+    ],
+  });
+
+  doc.setFontSize(10);
+  doc.setTextColor(150);
+  const date = new Date().toLocaleString();
+  doc.text(`Generated on: ${date}`, 105, doc.internal.pageSize.height - 20, {
+    align: 'center',
+  });
+
+  doc.setFontSize(14);
+  doc.setTextColor(54, 69, 79);
+  doc.text('SONY CORPORATION', 105, doc.internal.pageSize.height - 10, {
+    align: 'center',
+  });
+
+  doc.save(`delivery_report_${buy.id}.pdf`);
+};
+
 
 
 const Purchases = () => {
@@ -40,6 +89,7 @@ const Purchases = () => {
                 headers: {Authorization: `Token ${token}`},
             });
             setPurchase(response.data);
+            console.log(response.data)
         } catch (error) {
             console.log("error", error);
         }
@@ -99,7 +149,7 @@ const handleUpdateAssignment = async (purchaseId) => {
 const filteredPurchases = purchase.filter((buy) => {
   if (filterStatus === 'delivered') return buy.delivered === true;
   if (filterStatus === 'undelivered') return buy.delivered === false;
-  return true; // show all
+  return true;
 });
 
   return (
@@ -130,11 +180,13 @@ const filteredPurchases = purchase.filter((buy) => {
               <TableCell><strong>Quantity</strong></TableCell>
               <TableCell><strong>Country</strong></TableCell>
               <TableCell><strong>City</strong></TableCell>
+              <TableCell><strong>Price</strong></TableCell>
               <TableCell><strong>Phone</strong></TableCell>
               <TableCell><strong>delivered</strong></TableCell>
               <TableCell><strong>Purchase Date</strong></TableCell>
               <TableCell><strong>Provider</strong></TableCell>    
               <TableCell><strong>Assign/Update Delivery</strong></TableCell>
+              <TableCell><strong>Report</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -145,6 +197,9 @@ const filteredPurchases = purchase.filter((buy) => {
                 <TableCell>{buy.quantity}</TableCell>
                 <TableCell>{buy.country}</TableCell>
                 <TableCell>{buy.city}</TableCell>
+                <TableCell>
+                  {(buy.quantity * buy.price_at_purchase).toFixed(2)} {/* السعر النهائي */}
+                </TableCell>
                 <TableCell>{buy.phone}</TableCell>
                 <TableCell>
                     {buy.delivered ? <Check color="success" /> : <Clear color="error" />}
@@ -195,6 +250,17 @@ const filteredPurchases = purchase.filter((buy) => {
                         Assign
                       </Button>
                         )
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {buy.delivered && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => generatePdfReport(buy)}
+                        >
+                          Generate PDF
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>
