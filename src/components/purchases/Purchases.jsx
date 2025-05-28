@@ -28,7 +28,7 @@ const generatePdfReport = (buy) => {
 
   doc.setFontSize(22);
   doc.setTextColor(40, 40, 40);
-  doc.text('Delivery Report', 105, 20, { align: 'center' });
+  doc.text('Purchase Report', 105, 20, { align: 'center' });
 
   autoTable(doc, {
     startY: 30,
