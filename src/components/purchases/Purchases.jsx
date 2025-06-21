@@ -15,7 +15,11 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { Check, Clear } from '@mui/icons-material';
 import jsPDF from 'jspdf';
@@ -30,6 +34,7 @@ const generatePdfReport = (buy) => {
   doc.setTextColor(40, 40, 40);
   doc.text('Purchase Report', 105, 20, { align: 'center' });
 
+  // معلومات عامة عن الطلب
   autoTable(doc, {
     startY: 30,
     theme: 'grid',
@@ -38,19 +43,38 @@ const generatePdfReport = (buy) => {
     head: [['Field', 'Details']],
     body: [
       ['Customer', buy.customer],
-      ['Product', buy.product],
-      ['Quantity', buy.quantity],
       ['Country', buy.country],
       ['City', buy.city],
       ['Phone', buy.phone],
       ['Delivered', buy.delivered ? 'Yes' : 'No'],
       ['Provider', buy.provider_email || buy.delivery_provider || '-'],
       ['Purchase Date', new Date(buy.purchase_date).toLocaleString()],
-      ['Price at Purchase', `${buy.price_at_purchase} USD`],
-      ['Final Price', `${(buy.quantity * buy.price_at_purchase).toFixed(2)} USD`],
     ],
   });
 
+  // جدول المنتجات
+  doc.addPage();
+  doc.setFontSize(18);
+  doc.text('Products', 105, 20, { align: 'center' });
+
+  const productRows = buy.products?.map((prod) => [
+    prod.product_name,
+    prod.quantity,
+    `${(Number(prod.final_price) || 0).toFixed(2)} USD`,
+    `${((Number(prod.final_price) || 0) * (Number(prod.quantity) || 0)).toFixed(2)} USD`
+  ]) || [];
+  
+
+  autoTable(doc, {
+    startY: 30,
+    theme: 'striped',
+    headStyles: { fillColor: [100, 100, 255], halign: 'center' },
+    bodyStyles: { halign: 'center' },
+    head: [['Product Name', 'Quantity', 'Unit Price', 'Total']],
+    body: productRows,
+  });
+
+  // توقيع وتاريخ
   doc.setFontSize(10);
   doc.setTextColor(150);
   const date = new Date().toLocaleString();
@@ -69,12 +93,16 @@ const generatePdfReport = (buy) => {
 
 
 
+
 const Purchases = () => {
 
     const [purchase, setPurchase] = useState([]);
     const [deliveryProviders, setDeliveryProviders] = useState([]);
     const [selectedPurchaseId, setSelectedPurchaseId] = useState(null);
     const [selectedProvider, setSelectedProvider] = useState('');
+
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedPurchase, setSelectedPurchase] = useState(null);
 
     const [filterStatus, setFilterStatus] = useState('all');
 
@@ -176,16 +204,15 @@ const filteredPurchases = purchase.filter((buy) => {
           <TableHead>
             <TableRow>
               <TableCell><strong>Customer</strong></TableCell>
-              <TableCell><strong>Product</strong></TableCell>
-              <TableCell><strong>Quantity</strong></TableCell>
               <TableCell><strong>Country</strong></TableCell>
               <TableCell><strong>City</strong></TableCell>
-              <TableCell><strong>Price</strong></TableCell>
               <TableCell><strong>Phone</strong></TableCell>
               <TableCell><strong>delivered</strong></TableCell>
+              <TableCell><strong>declined</strong></TableCell>
               <TableCell><strong>Purchase Date</strong></TableCell>
               <TableCell><strong>Provider</strong></TableCell>    
               <TableCell><strong>Assign/Update Delivery</strong></TableCell>
+              <TableCell><strong>Details</strong></TableCell>
               <TableCell><strong>Report</strong></TableCell>
             </TableRow>
           </TableHead>
@@ -193,16 +220,14 @@ const filteredPurchases = purchase.filter((buy) => {
             {filteredPurchases.map((buy) => (
               <TableRow key={buy.id}>
                 <TableCell>{buy.customer}</TableCell>
-                <TableCell>{buy.product}</TableCell>
-                <TableCell>{buy.quantity}</TableCell>
                 <TableCell>{buy.country}</TableCell>
                 <TableCell>{buy.city}</TableCell>
-                <TableCell>
-                  {(buy.quantity * buy.price_at_purchase).toFixed(2)} {/* السعر النهائي */}
-                </TableCell>
                 <TableCell>{buy.phone}</TableCell>
                 <TableCell>
                     {buy.delivered ? <Check color="success" /> : <Clear color="error" />}
+                </TableCell>
+                <TableCell>
+                    {buy.declined ? <Check color="success" /> : <Clear color="error" />}
                 </TableCell>
                 <TableCell>{new Date(buy.purchase_date).toLocaleString()}</TableCell>
                 <TableCell>
@@ -253,6 +278,14 @@ const filteredPurchases = purchase.filter((buy) => {
                       )}
                     </TableCell>
                     <TableCell>
+                      <Button variant="outlined" size="small" onClick={() => {
+                        setSelectedPurchase(buy);
+                        setOpenModal(true);
+                      }}>
+                        Details
+                      </Button>
+                    </TableCell>
+                    <TableCell>
                       {buy.delivered && (
                         <Button
                           variant="contained"
@@ -268,6 +301,43 @@ const filteredPurchases = purchase.filter((buy) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Purchase Details</DialogTitle>
+        <DialogContent dividers>
+          {selectedPurchase ? (
+            <>
+              <Typography variant="subtitle1"><strong>Customer:</strong> {selectedPurchase.customer}</Typography>
+              <Typography variant="subtitle1"><strong>Country:</strong> {selectedPurchase.country}</Typography>
+              <Typography variant="subtitle1"><strong>City:</strong> {selectedPurchase.city}</Typography>
+              <Typography variant="subtitle1"><strong>Phone:</strong> {selectedPurchase.phone}</Typography>
+              <Typography variant="subtitle1"><strong>Date:</strong> {new Date(selectedPurchase.purchase_date).toLocaleString()}</Typography>
+
+              <Box mt={2}>
+                <Typography variant="h6">Products</Typography>
+                {selectedPurchase.products.map((prod, index) => (
+                  <Box key={index} display="flex" alignItems="center" gap={2} my={1}>
+                    <img
+                      src={`${prod.product_image}`}
+                      alt={prod.product_name}
+                      style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 8 }}
+                    />
+                    <Box>
+                      <Typography><strong>{prod.product_name}</strong></Typography>
+                      <Typography variant="body2">Quantity: {prod.quantity}</Typography>
+                      <Typography variant="body2">Price: {((Number(prod.final_price) || 0) * (Number(prod.quantity) || 0)).toFixed(2)}</Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            </>
+          ) : (
+            <Typography>Loading...</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
 }
